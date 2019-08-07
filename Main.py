@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt  # pip install matplotlib
 
 CHANNELS = 1
 RATE = 44100  # Sample Rate
+CHUNK = 4098
 t = 0.1  # seconds of sampling
-CHUNK = RATE*t   # number of data points to read at a time
+n = RATE*t   # number of data points to read at a time
 
-
-def applyfft(stream): # FFT on data stream
+def applyfft(self): # FFT on data stream
     # FFT
-    Y_k = np.fft.fft(stream)[0:int(CHUNK/2)]/CHUNK # FFT function from numpy
+    Y_k = np.fft.fft(self)[0:int(n/2)]/n # FFT function from numpy
     Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
     Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-    freqvector = RATE*np.arange((CHUNK/2))/CHUNK;
+    freqvector = RATE*np.arange((n/2))/n;
 
     # PLOT, may need to move to main instead of having in fft function
     fig,ax = plt.subplots()
@@ -24,7 +24,6 @@ def applyfft(stream): # FFT on data stream
     plt.ylabel('Amplitude')
     plt.xlabel('Frequency [Hz]')
     plt.show()
-
 
 if __name__=="__main__":
     p=pyaudio.PyAudio()  # start the PyAudio class & uses default input device
@@ -42,9 +41,7 @@ if __name__=="__main__":
             peak=np.average(np.abs(data))*2
             bars="▬"*int(50*peak/2**16)
             print("%04d %05d %s"%(peak,bars))   # prints audio level as bars
-
-
-
+            applyfft(data)
 
     except KeyboardInterrupt:  # closes on keystroke detection
         stream.stop_stream()
