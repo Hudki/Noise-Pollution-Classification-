@@ -1,12 +1,14 @@
 import pyaudio  # pip install pyaudio
 import numpy as np  # np varial name
-import scipy  # pip install scipy
 import matplotlib.pyplot as plt  # pip install matplotlib
+import time
+from twisted.internet import task, reactor
 
+timeout = 5 # seconds
 CHANNELS = 1
 RATE = 44100  # Sample Rate
 CHUNK = 4098
-t = 0.1  # seconds of sampling
+t = 0.1  # secondsof sampling
 n = RATE*t   # number of data points to read at a time
 
 def applyfft(self): # FFT on data stream
@@ -37,11 +39,15 @@ if __name__=="__main__":
     try:
         print('Press a key to close...')
         while True:  # unparsed data to see if mic works
-            data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
-            peak=np.average(np.abs(data))*2
-            bars="▬"*int(50*peak/2**16)
-            print("%04d %05d %s"%(peak,bars))   # prints audio level as bars
-            applyfft(data)
+                data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
+                peak=np.average(np.abs(data))*2
+                bars="█"*int(50*peak/2**16)
+                print("%04d %05d %s"(peak,bars))   # prints audio level as bars
+
+                applyfft(data)
+                delay = task.LoopingCall(applyfft(stream))
+                delay.start(timeout)  # start function after 5s
+                reactor.run()
 
     except KeyboardInterrupt:  # closes on keystroke detection
         stream.stop_stream()
