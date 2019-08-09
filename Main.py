@@ -39,15 +39,15 @@ if __name__=="__main__":
     try:
         print('Press a key to close...')
         while True:  # unparsed data to see if mic works
-                data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
-                peak=np.average(np.abs(data))*2
-                bars="█"*int(50*peak/2**16)
-                print("%04d %05d %s"(peak,bars))   # prints audio level as bars
-
-                applyfft(data)
-                delay = task.LoopingCall(applyfft(stream))
-                delay.start(timeout)  # start function after 5s
-                reactor.run()
+            data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
+            peak=np.average(np.abs(data))*2
+            bars="█"*int(50*peak/2**16)
+            print("%04d %05d %s"(peak,bars))   # prints audio level as bars
+            #To do later: Make the function run on its own thread (rework delay)
+            applyfft(data)
+            delay = task.LoopingCall(applyfft(stream))
+            delay.start(timeout)  # start function after 5s
+            reactor.run()
 
     except KeyboardInterrupt:  # closes on keystroke detection
         stream.stop_stream()
