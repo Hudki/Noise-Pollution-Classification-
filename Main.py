@@ -1,23 +1,21 @@
 import pyaudio  # pip install pyaudio
 import numpy as np  # np varial name
+import scipy  # pip install scipy
 import matplotlib.pyplot as plt  # pip install matplotlib
-import time
-from twisted.internet import task, reactor
 
-timeout = 5 # seconds
 CHANNELS = 1
 RATE = 44100  # Sample Rate
-CHUNK = 4098
-t = 0.1  # secondsof sampling
-n = RATE*t   # number of data points to read at a time
+t = 0.1  # seconds of sampling
+CHUNK = RATE*t   # number of data points to read at a time
+test = 4400
 
-def applyfft(self): # FFT on data stream
+
+def applyfft(stream): # FFT on data stream
     # FFT
-    Y_k = np.fft.fft(self)[0:int(n/2)]/n # FFT function from numpy
+    Y_k = np.fft.fft(stream)[0:int(CHUNK/2)]/CHUNK # FFT function from numpy
     Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
     Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-    freqvector = RATE*np.arange((n/2))/n;
-
+    freqvector = RATE*np.arange((CHUNK/2))/CHUNK;
     # PLOT, may need to move to main instead of having in fft function
     fig,ax = plt.subplots()
     plt.plot(freqvector,Pxx,linewidth=5)
@@ -27,29 +25,23 @@ def applyfft(self): # FFT on data stream
     plt.xlabel('Frequency [Hz]')
     plt.show()
 
-if __name__=="__main__":
-    p=pyaudio.PyAudio()  # start the PyAudio class & uses default input device
-    stream=p.open(format=pyaudio.paInt16,
-        channels=CHANNELS,
-        rate=RATE,
-        input=True,
-        output=False,
-        frames_per_buffer=CHUNK)
+p=pyaudio.PyAudio()  # start the PyAudio class & uses default input device
+stream=p.open(format=pyaudio.paInt16,
+    channels=CHANNELS,
+    rate=RATE,
+    input=True,
+    output=False,
+    frames_per_buffer=test)
 
-    try:
-        print('Press a key to close...')
-        while True:  # unparsed data to see if mic works
-            data = np.fromstring(stream.read(CHUNK),dtype=np.int16)
-            peak=np.average(np.abs(data))*2
-            bars="█"*int(50*peak/2**16)
-            print("%04d %05d %s"(peak,bars))   # prints audio level as bars
-            #To do later: Make the function run on its own thread (rework delay)
-            applyfft(data)
-            delay = task.LoopingCall(applyfft(stream))
-            delay.start(timeout)  # start function after 5s
-            reactor.run()
+try:
+    print('Press a key to close...')
+    while True:  # unparsed data to see if mic works
+        data = np.fromstring(stream.read(test),dtype=np.int16)
+        peak=np.average(np.abs(data))*2
+        bars="▬"*int(50*peak/2**16)
+        print("%04d %s"%(peak,bars))   # prints audio level as bars
 
-    except KeyboardInterrupt:  # closes on keystroke detection
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
+except KeyboardInterrupt:  # closes on keystroke detection
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
