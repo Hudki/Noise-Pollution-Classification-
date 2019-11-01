@@ -5,7 +5,7 @@ import threading
 parent_dir = '.'
 import time
 
-# step 1: preprocessing
+# step 1: preprocessing - Checks if there's already labels and features. 
 if np.DataSource().exists("./feat.npy") and np.DataSource().exists("./label.npy"):
     features, labels = np.load('./feat.npy'), np.load('./label.npy')
 else:
@@ -13,7 +13,7 @@ else:
     np.save('./feat.npy', features)
     np.save('./label.npy', labels)
 
-# step 2: training
+# step 2: training - Checks if there's a model existing 
 
 if np.DataSource().exists("./model.h5"):
     from keras.models import load_model
@@ -21,7 +21,6 @@ if np.DataSource().exists("./model.h5"):
 else:
     model = train(features, labels, epochs=2000)
     model.save('./model.h5')
-
 
 # step 3: prediction
 while True:
