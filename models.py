@@ -48,6 +48,7 @@ def cnn(num_classes):
     model.add(Dense(num_classes))
     model.add(Activation(activation))
 
+    
     return model
 
 def cnn2d(num_classes):
