@@ -1,10 +1,9 @@
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation
+from keras.layers import Dense, Dropout, Activation, Flatten, Reshape, BatchNormalization
 
 def svm(num_classes):
     """Support vector machine.
-    -*- ref: mtobeiyf https://github.com/mtobeiyf/audio-classification -*-
     """
     from sklearn.svm import SVC
 
@@ -13,13 +12,15 @@ def svm(num_classes):
 def nn(num_classes):
     """Multi-layer perceptron.
     """
+    activation = 'softmax' if num_classes > 2 else 'sigmoid'
     model = Sequential()
-    model.add(Dense(256, input_dim=193))
+    model.add(Dense(256, input_shape=(193, 1)))
     model.add(Activation('relu'))
     model.add(Dropout(0.6))
     model.add(Dense(512))
     model.add(Activation('relu'))
     model.add(Dropout(0.6))
+    model.add(Flatten())
     model.add(Dense(num_classes))
     model.add(Activation('softmax'))
 
@@ -27,7 +28,6 @@ def nn(num_classes):
 
 def cnn(num_classes):
     """1D Convolutional Neural Network.
-    -*- ref: panotti https://github.com/drscotthawley/panotti -*-
     """
     from keras.layers import Embedding
     from keras.layers import Conv1D, GlobalAveragePooling1D, MaxPooling1D
@@ -48,13 +48,17 @@ def cnn(num_classes):
     model.add(Dense(num_classes))
     model.add(Activation(activation))
 
-    
+
     return model
 
 def cnn2d(num_classes):
     """2D Convolutional Neural Network.
     -*- ref: panotti https://github.com/drscotthawley/panotti -*-
     """
+    from keras.layers import Conv2D, GlobalAveragePooling2D, MaxPooling2D
+
+    model = Sequential()
+    model.add(Reshape((64, 64, 1)))
     model.add(Conv2D(32, (3, 3), padding='valid', input_shape=(193, 1)))
     model.add(BatchNormalization(axis=1))
     model.add(Activation('relu'))
@@ -69,5 +73,7 @@ def cnn2d(num_classes):
     model.add(Dense(128))
     model.add(Activation('elu'))
     model.add(Dropout(0.5))
-    model.add(Dense(nb_classes))
-    model.add(Activation("softmax"))
+    model.add(Dense(num_classes))
+    model.add(Activation("softmax",name="Output"))
+
+    return model

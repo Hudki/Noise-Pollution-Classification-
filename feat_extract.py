@@ -62,7 +62,7 @@ def get_ext_features(fn):
 
 def parse_audio_file(fn):
     """Returns features of single audio file
-    -*- adapted from code by mtobiyf https://github.com/mtobeiyf/audio-classification -*-
+    -*- adapted from code by mtobeiyf https://github.com/mtobeiyf/audio-classification -*-
     """
     features = np.empty((0,193))
     ext_features = get_ext_features(fn)
