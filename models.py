@@ -1,6 +1,7 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Reshape, BatchNormalization
+from keras.layers import Conv2D, GlobalAveragePooling2D, MaxPooling2D
 
 def svm(num_classes):
     """Support vector machine.
@@ -55,25 +56,13 @@ def cnn2d(num_classes):
     """2D Convolutional Neural Network.
     -*- ref: panotti https://github.com/drscotthawley/panotti -*-
     """
-    from keras.layers import Conv2D, GlobalAveragePooling2D, MaxPooling2D
-
     model = Sequential()
-    model.add(Reshape((64, 64, 1)))
-    model.add(Conv2D(32, (3, 3), padding='valid', input_shape=(193, 1)))
-    model.add(BatchNormalization(axis=1))
-    model.add(Activation('relu'))
-
-    for layer in range(3):
-        model.add(Conv2D(32, (3, 3)))
-        model.add(Activation('elu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-        model.add(Dropout(0.5))
-
+    model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(193,193,1)))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.25))
     model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Activation('elu'))
+    model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(num_classes))
-    model.add(Activation("softmax",name="Output"))
-
+    model.add(Dense(num_classes, activation='softmax'))
     return model

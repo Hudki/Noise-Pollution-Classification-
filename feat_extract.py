@@ -8,9 +8,7 @@ import soundfile as sf
 from tqdm import tqdm
 
 def extract_feature(file_name):
-    """Generates feature input (mfccs, chroma, mel, contrast, tonnetz).
-    -*- author: mtobeiyf https://github.com/mtobeiyf/audio-classification -*-
-    """
+
     X, sample_rate = sf.read(file_name, dtype='float32')
     if X.ndim > 1:
         X = X[:,0]
@@ -25,9 +23,7 @@ def extract_feature(file_name):
     return mfccs, chroma, mel, contrast, tonnetz
 
 def parse_audio_files(parent_dir, sub_dirs, file_ext=None, verbose=True):
-    """Parses directory in search of specified file types, then compiles feature data from them.
-    -*- adapted from code by mtobeiyf https://github.com/mtobeiyf/audio-classification -*-
-    """
+
     # by default test for only these types
     if file_ext == None:
         file_types = ['*.ogg', '*.wav']
@@ -50,8 +46,7 @@ def parse_audio_files(parent_dir, sub_dirs, file_ext=None, verbose=True):
 
 def get_ext_features(fn):
     """Returns features for individual audio file.
-    -*- adapted from code by mtobeiyf https://github.com/mtobeiyf/audio-classification -*-
-    """
+"""
     try:
         mfccs, chroma, mel, contrast, tonnetz = extract_feature(fn)
         ext_features = np.hstack([mfccs, chroma, mel, contrast, tonnetz])
@@ -61,9 +56,7 @@ def get_ext_features(fn):
         return None
 
 def parse_audio_file(fn):
-    """Returns features of single audio file
-    -*- adapted from code by mtobeiyf https://github.com/mtobeiyf/audio-classification -*-
-    """
+    """Returns features of single audio file"""
     features = np.empty((0,193))
     ext_features = get_ext_features(fn)
     features = np.vstack([features,ext_features])
