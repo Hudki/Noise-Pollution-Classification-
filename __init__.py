@@ -31,8 +31,8 @@ def autoemail(message):
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
     sender_email = "cleechibi@gmail.com"  # Enter your address
-    password = "13k4ll0619"
-    receiver_email = "cl493@njit.edu"  # Enter receiver address
+    password = "enter your password"
+    receiver_email = "cl493@njit.ed"  # Enter receiver address
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
