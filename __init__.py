@@ -23,16 +23,16 @@ def feature_extraction(data_path):
     return features, labels
 
 def autotext(message):
-    client = Client("AC237898d9e30e666f5848dfb4ec7c03cd", "2d42cd318f0930028cc8d549a85829f0")
-    client.messages.create(to="+12016008892", from_="+12054306720", body=message)
+    client = Client("", "")
+    client.messages.create(to="+", from_="+", body=message)
 
 
 def autoemail(message):
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
-    sender_email = "cleechibi@gmail.com"  # Enter your address
+    sender_email = ""  # Enter your address
     password = "enter your password"
-    receiver_email = "cl493@njit.ed"  # Enter receiver address
+    receiver_email = ""  # Enter receiver address
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
